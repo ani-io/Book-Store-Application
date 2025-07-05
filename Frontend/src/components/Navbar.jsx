@@ -3,13 +3,24 @@ import { useState } from "react";
 import Login from "./Login";
 import Logout from "./Logout";
 import { useAuth } from "../context/AuthProvider";
+import { useCart } from "../context/CartContext";
+import Cart from "./Cart";
+import viteLogo from "../../public/vite.svg";
+import bookCademyLogo from "../assets/BookCademyLogo.svg";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Navbar() {
   const [authUser, setAuthUser] = useAuth();
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
   );
+  const { cart } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
   const element = document.documentElement;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     if (theme === "dark") {
       element.classList.add("dark");
@@ -36,32 +47,45 @@ function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate("/course", { state: { search } });
+    }
+  };
+
   const navItems = (
     <>
       <li>
-        <a href="/">Home</a>
+        <a href="/" className="rounded-full px-4 py-2 hover:bg-softBlue text-primary dark:text-white hover:text-primary dark:hover:text-accent transition-soft">Home</a>
       </li>
       <li>
-        <a href="/course">Course</a>
+        <a href="/course" className="rounded-full px-4 py-2 hover:bg-softBlue text-primary dark:text-white hover:text-primary dark:hover:text-accent transition-soft">Course</a>
       </li>
-      <li>
-        <a>Contact</a>
-      </li>
-      <li>
-        <a>About</a>
+      {/* Cart Nav Item */}
+      <li className="flex items-center">
+        <button
+          className="relative flex items-center justify-center px-3 py-2 rounded-full bg-softBlue dark:bg-slate-700 text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-accent dark:hover:text-slate-900 transition-soft"
+          onClick={() => setCartOpen(true)}
+          aria-label="Open cart"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 1 0 6 0m-6 0a3 3 0 0 1 6 0m-6 0H5.25a2.25 2.25 0 0 1-2.25-2.25V6.75A2.25 2.25 0 0 1 5.25 4.5h13.5a2.25 2.25 0 0 1 2.25 2.25v5.25a2.25 2.25 0 0 1-2.25 2.25h-1.5m-6 0h6" />
+          </svg>
+          {cart.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-secondary text-white text-xs rounded-full px-2 py-0.5">{cart.length}</span>
+          )}
+        </button>
       </li>
     </>
   );
   return (
     <>
       <div
-        className={` max-w-screen-2xl container mx-auto md:px-20 px-4 dark:bg-slate-800 dark:text-white fixed top-0 left-0 right-0 z-50 ${
-          sticky
-            ? "sticky-navbar shadow-md bg-base-200 dark:bg-slate-700 dark:text-white duration-300 transition-all ease-in-out"
-            : ""
-        }`}
+        className={`w-full fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/80 text-primary dark:text-white transition-soft`}
       >
-        <div className="navbar ">
+        <div className="navbar max-w-screen-2xl mx-auto md:px-20 px-4 flex items-center justify-between gap-4 py-2">
           <div className="navbar-start">
             <div className="dropdown">
               <div
@@ -91,32 +115,39 @@ function Navbar() {
                 {navItems}
               </ul>
             </div>
-            <a className=" text-2xl font-bold cursor-pointer">bookStore</a>
+            <a href="/" className="flex items-center gap-2 cursor-pointer">
+              <img src={bookCademyLogo} alt="BookCademy Logo" className="w-8 h-8" />
+              <span className="text-2xl font-bold text-primary dark:text-accent drop-shadow-sm transition-soft">BookCademy</span>
+            </a>
           </div>
           <div className="navbar-end space-x-3">
-            <div className="navbar-center hidden lg:flex">
-              <ul className="menu menu-horizontal px-1">{navItems}</ul>
+            <div className="navbar-center hidden lg:flex flex-1 justify-center">
+              <ul className="menu menu-horizontal px-1 flex items-center gap-2">{navItems}</ul>
             </div>
             <div className="hidden md:block">
-              <label className=" px-3 py-2 border rounded-md flex items-center gap-2">
+              <form onSubmit={handleSearch} className="flex items-center gap-2 bg-transparent px-2 py-1 rounded-md border border-gray-300 dark:border-slate-500 focus-within:border-pink-500 transition w-64">
                 <input
                   type="text"
-                  className="grow outline-none rounded-md px-1 dark:bg-slate-900 dark:text-white"
+                  className="grow outline-none bg-transparent rounded-md px-1 dark:bg-transparent dark:text-white"
                   placeholder="Search"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
                 />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  className="w-4 h-4 opacity-70"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </label>
+                <button type="submit" className="p-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    className="w-4 h-4 opacity-70"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </form>
             </div>
             <label className="swap swap-rotate">
               {/* this hidden checkbox controls the state */}
@@ -152,7 +183,7 @@ function Navbar() {
             ) : (
               <div className="">
                 <a
-                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 duration-300 cursor-pointer"
+                  className="bg-primary text-white px-4 py-2 rounded-full shadow-soft hover:bg-secondary hover:text-white transition-soft cursor-pointer"
                   onClick={() =>
                     document.getElementById("my_modal_3").showModal()
                   }
@@ -165,6 +196,9 @@ function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Cart Modal */}
+      {cartOpen && <Cart onClose={() => setCartOpen(false)} />}
     </>
   );
 }

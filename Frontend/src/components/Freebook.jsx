@@ -60,13 +60,11 @@ function Freebook() {
   };
   return (
     <>
-      <div className=" max-w-screen-2xl container mx-auto md:px-20 px-4">
+      <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 rounded-soft shadow-soft transition-soft bg-white/80 dark:bg-transparent pt-12">
         <div>
-          <h1 className="font-semibold text-xl pb-2">Free Offered Courses</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Accusantium veritatis alias pariatur ad dolor repudiandae eligendi
-            corporis nulla non suscipit, iure neque earum?
+          <h1 className="font-bold text-2xl md:text-3xl pb-2 text-primary dark:text-accent transition-soft">Free Offered Courses</h1>
+          <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg transition-soft">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium veritatis alias pariatur ad dolor repudiandae eligendi corporis nulla non suscipit, iure neque earum?
           </p>
         </div>
 

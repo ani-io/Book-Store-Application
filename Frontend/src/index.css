@@ -6,4 +6,9 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
+  transition: background 0.5s, color 0.3s, box-shadow 0.3s;
+}
+body.dark {
+  background: linear-gradient(135deg, #181f2a 0%, #232946 100%);
 }
